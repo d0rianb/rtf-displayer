@@ -1,0 +1,11 @@
+[package]
+name = "rtf-displayer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+speedy2d = "2.0.0"
+rtf-parser = { path = "../rtf-parser" }
+lazy_static = { version = "1.4.0", features = [] }
