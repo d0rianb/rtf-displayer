@@ -43,14 +43,22 @@ impl Displayer {
         let file_content = fs::read_to_string(&valid_filepath).expect(&format!("Unable to load file to {}", filepath));
         let tokens = Lexer::scan(&file_content).expect("Unable to scan the file");
         let document = Parser::new(tokens).parse().expect("Unable to parse the file");
-        // dbg!(&document.body);
         self.document = document;
+        self.layout_text();
         self.send_event(DisplayerEvent::Render);
+    }
+
+    fn layout_text(&mut self) {
+
     }
 
     pub fn on_mouse_move(&self, position: Vector2<f32>) {}
 
     pub fn render(&self, graphics: &mut Graphics2D) {
+        // TODO: header inspection
+        // TODO: Camera
+        // TODO: proper font support
+        // TODO: precompute the layout to have the informations on hover
         graphics.clear_screen(Color::WHITE); // TODO: Duplicate with on_draw of WindowHandler
         let font = &DEFAULT_FONT; // Speedy2d font representation
         let font_size = 24.;
