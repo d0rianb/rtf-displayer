@@ -6,6 +6,7 @@ use speedy2d::font::{Font, TextLayout, TextOptions};
 use speedy2d::Graphics2D;
 use speedy2d::window::UserEventSender;
 use lazy_static::lazy_static;
+use crate::camera::Camera;
 
 use crate::DisplayerEvent;
 
@@ -18,7 +19,8 @@ lazy_static! {
 
 pub struct Displayer {
     pub event_sender: Option<UserEventSender<DisplayerEvent>>,
-    document: RtfDocument,
+    pub document: RtfDocument,
+    pub camera: Camera
 }
 
 impl Displayer {
@@ -26,6 +28,7 @@ impl Displayer {
         Displayer {
             event_sender: None,
             document: RtfDocument::default(),
+            camera: Default::default(),
         }
     }
 
@@ -77,7 +80,7 @@ impl Displayer {
                     x = 0.;
                 }
                 let y = (line_number as f32) * font_size;
-                graphics.draw_text(Vector2::new(x, y), Color::BLACK, &ftb);
+                graphics.draw_text(Vector2::new(x + self.camera.offset_x, y + self.camera.offset_y), Color::BLACK, &ftb);
                 // TODO: handle multi lines
                 x += ftb.width();
             }

@@ -1,13 +1,15 @@
 // Project linked with the rtf-parser library, to debug the parsing
 
 mod displayer;
+mod camera;
 
 use std::thread;
 use std::time::Duration;
 use speedy2d::color::Color;
 use speedy2d::dimen::Vector2;
 use speedy2d::{Graphics2D, Window};
-use speedy2d::window::{MouseButton, WindowCreationOptions, WindowHandler, WindowHelper, WindowPosition, WindowSize, WindowStartupInfo};
+use speedy2d::window::{KeyScancode, MouseButton, MouseScrollDistance, VirtualKeyCode, WindowCreationOptions, WindowHandler, WindowHelper, WindowPosition, WindowSize, WindowStartupInfo};
+use speedy2d::window::MouseScrollDistance::Pixels;
 use crate::displayer::Displayer;
 
 const FPS: u64 = 60;
@@ -51,13 +53,31 @@ impl WindowHandler<DisplayerEvent> for DisplayerWindowHandler {
         self.displayer.render(graphics);
     }
 
-    fn on_mouse_move(&mut self, _helper: &mut WindowHelper<DisplayerEvent>, position: Vector2<f32>) {
+    fn on_key_up(&mut self, helper: &mut WindowHelper<DisplayerEvent>, virtual_key_code: Option<VirtualKeyCode>, scancode: KeyScancode) {
+        use VirtualKeyCode::*;
+        if let Some (vkc) = virtual_key_code {
+            match vkc {
+                R => self.displayer.camera.reset(),
+                _ => {}
+            };
+            helper.request_redraw();
+        }
+    }
+
+    fn on_mouse_move(&mut self, helper: &mut WindowHelper<DisplayerEvent>, position: Vector2<f32>) {
         self.displayer.on_mouse_move(position);
+        helper.request_redraw();
     }
 
     fn on_mouse_button_down(&mut self, _helper: &mut WindowHelper<DisplayerEvent>, _button: MouseButton) {}
 
     fn on_mouse_button_up(&mut self, _helper: &mut WindowHelper<DisplayerEvent>, _button: MouseButton) {}
+
+    fn on_mouse_wheel_scroll(&mut self, helper: &mut WindowHelper<DisplayerEvent>, distance: MouseScrollDistance) {
+        if let Pixels { x, y, z} = distance {
+            self.displayer.camera.scroll(x, y);
+        }
+    }
 }
 
 
